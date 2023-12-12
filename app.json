@@ -3,13 +3,12 @@
     "name": "drink-up",
     "slug": "drink-up",
     "version": "1.0.0",
-    "orientation": "portrait",  
+    "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/android.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/icono.png",
+      "resizeMode": "contain"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,12 +18,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/icono.png",
+        "backgroundColor": "#000"
+      },
+      "package": "com.tuempresa.tuapp"
+
+      
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2a9b86ee-f737-4cfa-a078-82befdb275a3"
+      }
     }
   }
 }

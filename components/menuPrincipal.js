@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, View, Text, TextInput, Button, StyleSheet, FlatList, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { TouchableOpacity, View, Text, TextInput, StyleSheet, FlatList, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import Advertencia from './advertencia';// Importa el componente Advertencia
 
-const MenuPrincipal =  ({navigation}) => {
+const MenuPrincipal = ({ navigation }) => {
   const [nombre, setNombre] = useState('');
   const [nombresList, setNombresList] = useState([]);
   const [notification, setNotification] = useState(null);
+  const [showWarning, setShowWarning] = useState(false);
+
+  useEffect(() => {
+    // Mostrar la advertencia después de un tiempo (por ejemplo, 2 segundos)
+    setTimeout(() => {
+      setShowWarning(true);
+    }, 2000);
+  }, []);
+
+  const handleAccept = () => {
+    // Cerrar la advertencia
+    setShowWarning(false);
+    // Lógica para cargar tu aplicación normal después de aceptar la advertencia
+    // (puedes agregar tu lógica aquí)
+  };
 
   const handleInputChange = (text) => {
-    setNombre(text);
+    // Verificar si el texto contiene solo letras y espacios
+    if (/^[a-zA-Z\s]*$/.test(text)) {
+      setNombre(text);
+    } else {
+      setNotification("No se aceptan números");
+      setTimeout(() => {
+        setNotification(null);
+      }, 1000);
+    }
   };
 
   const handleButtonPress = () => {
-    if (nombre !== '') {
+    if (nombre.trim() !== '') {
       setNombresList([...nombresList, nombre]);
       setNombre('');
       showNotification(nombre);
@@ -20,8 +44,7 @@ const MenuPrincipal =  ({navigation}) => {
   };
 
   const showNotification = (nombre) => {
-    setNotification(`Se agrego con exito: ${nombre}`);
-  
+    setNotification(`Se agregó con éxito: ${nombre}`);
     setTimeout(() => {
       setNotification(null);
     }, 1000);
@@ -47,32 +70,10 @@ const MenuPrincipal =  ({navigation}) => {
     }
   };
 
-  const randomColor = () => {
-    const colors = [
-        '#FF00FF', // Magenta
-        '#800080', // Púrpura
-        '#0000FF', // Azul
-        '#00FFFF', // Celeste
-        '#00FF00', // Verde
-        '#FFFF00', // Amarillo
-        '#FF0000', // Rojo
-    ]; // Asegúrate de que los colores coincidan con los del estilo
-
-    const randomIndex = Math.floor(Math.random() * (colors.length - 1));
-    const color1 = colors[randomIndex];
-    const color2 = colors[randomIndex + 1];
-    const gradient = Math.random(); // Puedes ajustar este valor para controlar la intensidad del degradado
-    const r = Math.round(parseInt(color1.slice(1, 3), 16) * gradient + parseInt(color2.slice(1, 3), 16) * (1 - gradient));
-    const g = Math.round(parseInt(color1.slice(3, 5), 16) * gradient + parseInt(color2.slice(3, 5), 16) * (1 - gradient));
-    const b = Math.round(parseInt(color1.slice(5, 7), 16) * gradient + parseInt(color2.slice(5, 7), 16) * (1 - gradient));
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-};
-
-
-const renderItem = (item, index) => (
-    <View key={index} style={[styles.listItem, { backgroundColor: randomColor() }]}>
+  const renderItem = (item, index) => (
+    <View key={index} style={[styles.listItem, { backgroundColor: '#ffd700' }]}>
       <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(index)}>
-        <MaterialIcons name="cancel" size={24} color="white" />
+        <MaterialIcons name="cancel" size={24} color="#fff" />
       </TouchableOpacity>
       <Text style={styles.itemText}>{item}</Text>
     </View>
@@ -88,7 +89,7 @@ const renderItem = (item, index) => (
       <Text style={styles.title}>Drink Up</Text>
       <Text style={styles.subtitle}>La timidez es un obstáculo para divertirse</Text>
       <FlatList
-        style={{marginTop:20,marginBottom:20}}
+        style={{ marginTop: 20, marginBottom: 20 }}
         data={nombresList}
         renderItem={renderRow}
         keyExtractor={(item, index) => index.toString()}
@@ -105,11 +106,12 @@ const renderItem = (item, index) => (
       <TouchableOpacity style={styles.largeButton2} onPress={handleStartGame}>
         <Text style={styles.buttonText}>Iniciar Juego</Text>
       </TouchableOpacity>
+      <Advertencia visible={showWarning} onClose={handleAccept} />
       {notification && (
-      <View style={styles.notification}>
-        <Text style={styles.notificationText}>{notification}</Text>
-      </View>
-        )}
+        <View style={styles.notification}>
+          <Text style={styles.notificationText}>{notification}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -126,15 +128,14 @@ const styles = StyleSheet.create({
     marginTop: 80,
     fontSize: 60,
     fontWeight: 'bold',
-    color: '#ff00ff', // Cambia el color a un tono morado más vibrante
-    textShadowColor: '#B110FE',
+    color: '#fff',
+    textShadowColor: '#000',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15, // Aumenta el radio del resplandor para hacerlo más pronunciado
+    textShadowRadius: 15,
     transform: [{ skewY: '-10deg' }]
   },
-   
   subtitle: {
-    marginTop:50,
+    marginTop: 50,
     fontSize: 17,
     marginBottom: 20,
     color: '#fff'
@@ -142,10 +143,10 @@ const styles = StyleSheet.create({
   input: {
     width: 300,
     height: 40,
-    color:'#fff',
-    borderColor: 'gray',
+    color: '#fff',
+    borderColor: '#fff',
     borderWidth: 1,
-    borderRadius:10,
+    borderRadius: 10,
     marginBottom: 20,
     paddingHorizontal: 10,
   },
@@ -166,45 +167,45 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   itemText: {
-    color: 'white',
+    color: '#fff',
   },
   largeButton1: {
-    borderRadius:10,
+    borderRadius: 10,
     width: 320,
     height: 40,
-    backgroundColor: '#6495ED',
+    backgroundColor: '#ffd700',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom:15
+    marginBottom: 15
   },
   largeButton2: {
-    borderRadius:10,
+    borderRadius: 10,
     width: 320,
     height: 40,
-    backgroundColor: '#6495ED',
+    backgroundColor: '#ffd700',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom:30
+    marginBottom: 30
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
   },
   notification: {
-    borderRadius:8,
-    marginTop:20,
+    borderRadius: 8,
+    marginTop: 20,
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'green', // Puedes ajustar el color de la notificación
+    backgroundColor: '#ffd700', 
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   notificationText: {
-    color: 'white',
+    color: '#fff',
   },
   deleteButton: {
     position: 'absolute',
